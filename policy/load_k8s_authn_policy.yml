@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+curr_dir=$(pwd)
+
+docker run --rm -v $curr_dir:/root -i cyberark/conjur-cli:5 authn login -u admin -p $CONJUR_ADMIN_PASSWORD
+
+mkdir -p ./generated
+#=== K8S Authenticator policies
+sed -e "s#{{ AUTHENTICATOR_ID }}#$AUTHENTICATOR_ID#g" ./template/authn-k8s-cluster-template.yml | \
+   sed -e "s#{{ CONJUR_NAMESPACE_NAME }}#$CONJUR_NAMESPACE_NAME#g"  > ./generated/authn-k8s-cluster.yml
+docker run --rm -v $curr_dir:/root -i cyberark/conjur-cli:5 policy load root /root/generated/authn-k8s-cluster.yml
+
+
+#== Initialize Conjur CA for K8S Authenticator
+docker exec dap-appliance \
+    chpst -u conjur conjur-plugin-service possum \
+      rake authn_k8s:ca_init["conjur/authn-k8s/$AUTHENTICATOR_ID"]
+
+
+#== Enable K8S Authenticator on MASTER
+# TO DO - check and apply this only if authn-k8s\ID not existing in the file
+# also change from echo whole line to append text within the CONJUR_AUTHENTICATORS
+docker exec dap-appliance bash -c \
+    "echo CONJUR_AUTHENTICATORS=\"authn,authn-k8s/$AUTHENTICATOR_ID\" >> \
+      /opt/conjur/etc/conjur.conf && \
+        sv restart conjur"

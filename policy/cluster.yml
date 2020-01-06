@@ -1,0 +1,19 @@
+- !policy
+  id: conjur
+  body:
+    - !policy
+        id: cluster/dap-cluster
+        annotations:
+          ttl: 300
+        body:
+        - !layer
+        - &hosts
+          - !host
+            id: dap1.cyberark.local
+          - !host
+            id: dap2.cyberark.local
+          - !host
+            id: dap3.cyberark.local
+        - !grant
+          role: !layer
+          member: *hosts

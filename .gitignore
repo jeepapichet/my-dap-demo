@@ -1,0 +1,11 @@
+mybootstrap.env
+*notuse*
+*old*
+*.cache*
+*generated*
+seed-fetcher*
+*.conjurrc
+*.netrc
+*.pem
+conjur-api-test/java-demo-app/target/*
+minikube-bootstrap.env

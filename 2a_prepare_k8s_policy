@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+script_dir=my-okd-conjur-deploy
+
+pushd policy
+./load_k8s_authn_policy.yml
+popd

@@ -1,0 +1,22 @@
+# Sample openshift authenticator policy policy
+#policy : conjur/authn-k8s/{{ AUTHENTICATOR_ID }}/apps
+- !layer
+  annotations:
+    description: Layer of authenticator identities to call authn service
+- &hosts
+  - !host
+    id: {{ TEST_APP_NAMESPACE_NAME }}/*/*
+    annotations:
+      kubernetes/authentication-container-name: authenticator
+      kubernetes: true
+
+  - !host
+    id: {{ TEST_APP_NAMESPACE_NAME }}/service_account/{{ TEST_APP_NAMESPACE_NAME }}
+    annotations:
+      kubernetes/authentication-container-name: authenticator
+      kubernetes: true
+
+  # add hosts to the apps layer
+- !grant
+  role: !layer
+  members: *hosts

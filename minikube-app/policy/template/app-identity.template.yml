@@ -1,0 +1,12 @@
+# Define secrets the app has access to
+- !policy
+  id: minikube-apps/{{ TEST_APP_NAMESPACE_NAME }}
+  owner: !group admins
+  body:
+  - !layer
+
+  - !grant
+    role: !layer
+    members:
+    - !host /conjur/authn-k8s/{{ AUTHENTICATOR_ID }}/apps/{{ TEST_APP_NAMESPACE_NAME }}/*/*
+    - !host /conjur/authn-k8s/{{ AUTHENTICATOR_ID }}/apps/{{ TEST_APP_NAMESPACE_NAME }}/service_account/{{ TEST_APP_NAMESPACE_NAME }}

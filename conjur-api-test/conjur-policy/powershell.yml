@@ -1,0 +1,8 @@
+---
+- !host demo-script
+
+- !layer
+
+- !grant
+  role: !layer
+  member: !host demo-script

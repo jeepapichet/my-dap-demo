@@ -1,0 +1,35 @@
+# Sample openshift authenticator policy policy
+- !layer
+  annotations:
+    description: Layer of authenticator identities to call authn service
+- &k8s_authorized_hosts
+
+#==== Demo app cityapp
+     - !host
+       id: cityapp/*/*
+       annotations:
+         kubernetes/authentication-container-name: authenticator
+         openshift: true
+
+     - !host
+       id: cityapp/service_account/cityapp-restapi-sidecar
+       annotations:
+         kubernetes/authentication-container-name: authenticator
+         openshift: true
+
+     - !host
+       id: cityapp/service_account/cityapp-summon-init
+       annotations:
+         kubernetes/authentication-container-name: authenticator
+         openshift: true
+
+     - !host
+       id: cityapp/service_account/cityapp-secretless
+       annotations:
+         kubernetes/authentication-container-name: authenticator
+         openshift: true
+
+
+- !grant
+  role: !layer
+  members: *k8s_authorized_hosts
